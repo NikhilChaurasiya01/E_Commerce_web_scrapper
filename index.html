@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCompare - Best Price Comparison Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --surface-light: #334155;
+            --text-color: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --surface-light: #f1f5f9;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Header */
+        header {
+            background: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 3rem 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-bar button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .icon-btn {
+            position: relative;
+            background: var(--surface-light);
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Filters */
+        .filters-section {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filters-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 0.6rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .clear-filters {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .clear-filters:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--surface-color);
+            padding: 0.3rem;
+            border-radius: 8px;
+        }
+
+        .view-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .view-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sort-select {
+            padding: 0.6rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--surface-color);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        /* Loading Skeleton */
+        .skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .skeleton-card {
+            background: var(--surface-color);
+            border-radius: 12px;
+            padding: 1rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        .skeleton-img {
+            width: 100%;
+            height: 200px;
+            background: var(--surface-light);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .skeleton-line {
+            height: 12px;
+            background: var(--surface-light);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .skeleton-line.short {
+            width: 60%;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .product-card {
+            background: var(--surface-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s;
+            background: var(--bg-color);
+        }
+
+        .product-image.loading {
+            opacity: 0.5;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--danger-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .wishlist-btn:hover {
+            background: var(--danger-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .wishlist-btn.active {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .compare-checkbox {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0.4rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+        }
+
+        .compare-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .compare-checkbox label {
+            cursor: pointer;
+            color: var(--bg-color);
+            margin: 0;
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-store {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .product-specs {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .spec-tag {
+            background: var(--surface-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .stars {
+            color: var(--warning-color);
+        }
+
+        .rating-count {
+            color: var(--text-muted);
+        }
+
+        .product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .mrp {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* List View */
+        .products-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .product-card.list-view {
+            display: flex;
+            flex-direction: row;
+            height: auto;
+        }
+
+        .product-card.list-view .product-image-container {
+            width: 200px;
+            height: 200px;
+            flex-shrink: 0;
+        }
+
+        .product-card.list-view .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .pagination button {
+            padding: 0.6rem 1rem;
+            border: 2px solid var(--border-color);
+            background: var(--surface-color);
+            color: var(--text-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Comparison Panel */
+        .comparison-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface-color);
+            border-top: 2px solid var(--primary-color);
+            padding: 1rem 2rem;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 99;
+        }
+
+        .comparison-panel.active {
+            transform: translateY(0);
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            max-width: 800px;
+        }
+
+        .comparison-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .comparison-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 0.5rem;
+        }
+
+        .remove-comparison {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface-color);
+            border-radius: 16px;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background: var(--surface-light);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-bar {
+                max-width: 100%;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .product-card.list-view {
+                flex-direction: column;
+            }
+
+            .product-card.list-view .product-image-container {
+                width: 100%;
+            }
+
+            .stats-bar {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="/" class="logo">
+                <i class="fas fa-chart-line"></i>
+                <span>SmartCompare</span>
+            </a>
+            
+            <div class="search-bar">
+                <input type="text" id="globalSearch" placeholder="Search products across all stores...">
+                <button onclick="applyFilters()"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="header-actions">
+                <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="icon-btn" id="wishlistBtn" onclick="toggleWishlistView()">
+                    <i class="fas fa-heart"></i>
+                    <span class="badge" id="wishlistCount">0</span>
+                </button>
+                <button class="icon-btn" id="compareBtn" onclick="showComparison()">
+                    <i class="fas fa-balance-scale"></i>
+                    <span class="badge" id="compareCount">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-value" id="totalProducts">0</span>
+                <span class="stat-label">Total Products</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="totalStores">0</span>
+                <span class="stat-label">Stores</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="avgPrice">₹0</span>
+                <span class="stat-label">Avg Price</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="bestDeal">0%</span>
+                <span class="stat-label">Best Discount</span>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filters-header">
+                <h3><i class="fas fa-filter"></i> Filters</h3>
+                <button class="clear-filters" onclick="clearFilters()">
+                    <i class="fas fa-times"></i> Clear All
+                </button>
+            </div>
+            
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Store</label>
+                    <select id="storeFilter">
+                        <option value="">All Stores</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Brand</label>
+                    <select id="brandFilter">
+                        <option value="">All Brands</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Min Price</label>
+                    <input type="number" id="minPrice" placeholder="₹0">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Max Price</label>
+                    <input type="number" id="maxPrice" placeholder="₹100000">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Min Rating</label>
+                    <select id="minRating">
+                        <option value="">Any Rating</option>
+                        <option value="4">4★ & above</option>
+                        <option value="3">3★ & above</option>
+                        <option value="2">2★ & above</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="setView('grid')">
+                        <i class="fas fa-th-large"></i> Grid
+                    </button>
+                    <button class="view-btn" onclick="setView('list')">
+                        <i class="fas fa-list"></i> List
+                    </button>
+                </div>
+                <span id="productCount" style="color: var(--text-muted); font-size: 0.9rem;">Loading...</span>
+            </div>
+            
+            <select class="sort-select" id="sortBy" onchange="applyFilters()">
+                <option value="">Sort By</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="rating_desc">Rating: High to Low</option>
+                <option value="discount_desc">Discount: High to Low</option>
+                <option value="name_asc">Name: A to Z</option>
+            </select>
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div id="loadingSkeleton" class="skeleton-grid" style="display: none;"></div>
+
+        <!-- Products Container -->
+        <div id="productsContainer" class="products-grid"></div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- Comparison Panel -->
+    <div class="comparison-panel" id="comparisonPanel">
+        <div class="comparison-header">
+            <h3><i class="fas fa-balance-scale"></i> Compare Products (<span id="comparisonCount">0</span>/4)</h3>
+            <div>
+                <button class="btn-primary" onclick="showComparisonModal()" style="margin-right: 0.5rem;">
+                    <i class="fas fa-eye"></i> Compare Now
+                </button>
+                <button class="btn-secondary" onclick="clearComparison()">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            </div>
+        </div>
+        <div class="comparison-products" id="comparisonProducts"></div>
+    </div>
+
+    <!-- Comparison Modal -->
+    <div class="modal" id="comparisonModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeComparisonModal()">×</button>
+            <h2><i class="fas fa-balance-scale"></i> Product Comparison</h2>
+            <div id="comparisonTableContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let allProducts = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentView = 'grid';
+        let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        let comparison = [];
+        let stats = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 SmartCompare initialized');
+            loadStats();
+            loadProducts();
+            updateWishlistCount();
+            
+            // Add event listeners for filters
+            document.getElementById('storeFilter').addEventListener('change', applyFilters);
+            document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+            document.getElementById('brandFilter').addEventListener('change', applyFilters);
+            document.getElementById('minPrice').addEventListener('input', debounce(applyFilters, 500));
+            document.getElementById('maxPrice').addEventListener('input', debounce(applyFilters, 500));
+            document.getElementById('minRating').addEventListener('change', applyFilters);
+            document.getElementById('globalSearch').addEventListener('input', debounce(applyFilters, 500));
+        });
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                stats = await response.json();
+                
+                document.getElementById('totalProducts').textContent = stats.total_products.toLocaleString();
+                document.getElementById('totalStores').textContent = stats.stores.length;
+                document.getElementById('avgPrice').textContent = '₹' + Math.round(stats.price_range.avg).toLocaleString();
+                
+                const storeFilter = document.getElementById('storeFilter');
+                stats.stores.forEach(store => {
+                    const option = document.createElement('option');
+                    option.value = store;
+                    option.textContent = store;
+                    storeFilter.appendChild(option);
+                });
+                
+                const categoryFilter = document.getElementById('categoryFilter');
+                stats.categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categoryFilter.appendChild(option);
+                });
+                
+                const brandFilter = document.getElementById('brandFilter');
+                stats.brands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand;
+                    option.textContent = brand;
+                    brandFilter.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadProducts(page = 1) {
+            showLoading(true);
+            currentPage = page;
+            
+            const params = new URLSearchParams({
+                page: page,
+                limit: 30,
+                search: document.getElementById('globalSearch').value,
+                store: document.getElementById('storeFilter').value,
+                category: document.getElementById('categoryFilter').value,
+                brand: document.getElementById('brandFilter').value,
+                sort_by: document.getElementById('sortBy').value
+            });
+            
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const minRating = document.getElementById('minRating').value;
+            
+            if (minPrice) params.append('min_price', minPrice);
+            if (maxPrice) params.append('max_price', maxPrice);
+            if (minRating) params.append('min_rating', minRating);
+            
+            try {
+                const response = await fetch(`/api/products?${params}`);
+                const data = await response.json();
+                
+                allProducts = data.products;
+                totalPages = data.pagination.total_pages;
+                
+                displayProducts(allProducts);
+                renderPagination(data.pagination);
+                
+                document.getElementById('productCount').textContent = 
+                    `Showing ${allProducts.length} of ${data.pagination.total_products} products`;
+                
+                const maxDiscount = Math.max(...allProducts.map(p => p.discount || 0));
+                document.getElementById('bestDeal').textContent = Math.round(maxDiscount) + '%';
+                
+                showLoading(false);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showLoading(false);
+                showEmptyState('Error loading products. Please try again.');
+            }
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('productsContainer');
+            container.className = currentView === 'grid' ? 'products-grid' : 'products-list';
+            
+            if (products.length === 0) {
+                showEmptyState('No products found matching your filters.');
+                return;
+            }
+            
+            container.innerHTML = products.map(product => createProductCard(product)).join('');
+        }
+
+        function createProductCard(product) {
+            const isInWishlist = wishlist.includes(product.product_name);
+            const isInComparison = comparison.some(p => p.product_name === product.product_name);
+            const discount = product.discount || 0;
+            const rating = product.rating || 0;
+            const reviews = product.reviews || 0;
+            
+            return `
+                <div class="product-card ${currentView === 'list' ? 'list-view' : ''}">
+                    <div class="product-image-container">
+                        ${discount > 0 ? `<div class="product-badge">${Math.round(discount)}% OFF</div>` : ''}
+                        <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" 
+                                onclick="toggleWishlist('${product.product_name.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="compare-checkbox">
+                            <input type="checkbox" id="compare-${product.product_name.replace(/[^a-zA-Z0-9]/g, '')}" 
+                                   ${isInComparison ? 'checked' : ''} 
+                                   onchange="toggleComparison(this, '${product.product_name.replace(/'/g, "\\'")}')">
+                            <label for="compare-${product.product_name.replace(/[^a-zA-Z0-9]/g, '')}">Compare</label>
+                        </div>
+                        <img src="${product.image_url || ''}" 
+                             alt="${product.product_name}"
+                             class="product-image"
+                             loading="lazy"
+                             crossorigin="anonymous"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Crect width=%27200%27 height=%27200%27 fill=%27%23334155%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27%2394a3b8%27 font-size=%2720%27%3ENo Image%3C/text%3E%3C/svg%3E';"
+                             onload="this.classList.remove('loading')">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-store">${product.retailer || 'Unknown'}</span>
+                        <h3 class="product-name">${product.product_name}</h3>
+                        ${(() => {
+                            const specs = [];
+                            if (product.brand) specs.push(`<span class="spec-tag"><i class="fas fa-tag"></i> ${product.brand}</span>`);
+                            if (product.ram) specs.push(`<span class="spec-tag"><i class="fas fa-memory"></i> ${product.ram}</span>`);
+                            if (product.storage) specs.push(`<span class="spec-tag"><i class="fas fa-hdd"></i> ${product.storage}</span>`);
+                            if (product.processor) specs.push(`<span class="spec-tag"><i class="fas fa-microchip"></i> ${product.processor}</span>`);
+                            if (product.screen_size) specs.push(`<span class="spec-tag"><i class="fas fa-tv"></i> ${product.screen_size}</span>`);
+                            if (product.color) specs.push(`<span class="spec-tag"><i class="fas fa-palette"></i> ${product.color}</span>`);
+                            return specs.length > 0 ? `<div class="product-specs">${specs.join('')}</div>` : '';
+                        })()}
+                        ${rating && rating > 0 ? `
+                        <div class="product-rating">
+                            <span class="stars">${'★'.repeat(Math.round(rating))}${'☆'.repeat(5 - Math.round(rating))}</span>
+                            <span>${rating.toFixed(1)}</span>
+                            ${reviews && reviews > 0 ? `<span class="rating-count">(${reviews.toLocaleString()})</span>` : ''}
+                        </div>
+                        ` : ''}
+                        <div class="product-price">
+                            <span class="price">₹${Math.round(product.price).toLocaleString()}</span>
+                            ${product.mrp && product.mrp > product.price ? 
+                                `<span class="mrp">₹${Math.round(product.mrp).toLocaleString()}</span>` : ''}
+                        </div>
+                        <div class="product-actions">
+                            ${product.url ? `
+                            <a href="${product.url}" target="_blank" class="btn-primary">
+                                <i class="fas fa-shopping-cart"></i> Buy
+                            </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPagination(pagination) {
+            const container = document.getElementById('pagination');
+            const { page, total_pages, has_prev, has_next } = pagination;
+            
+            if (total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = `<button onclick="loadProducts(${page - 1})" ${!has_prev ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> Previous</button>`;
+            
+            const startPage = Math.max(1, page - 2);
+            const endPage = Math.min(total_pages, page + 2);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button onclick="loadProducts(${i})" ${i === page ? 'class="active"' : ''}>${i}</button>`;
+            }
+            
+            html += `<button onclick="loadProducts(${page + 1})" ${!has_next ? 'disabled' : ''}>Next <i class="fas fa-chevron-right"></i></button>`;
+            
+            container.innerHTML = html;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function applyFilters() {
+            loadProducts(1);
+        }
+
+        function clearFilters() {
+            document.getElementById('globalSearch').value = '';
+            document.getElementById('storeFilter').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('brandFilter').value = '';
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            document.getElementById('minRating').value = '';
+            document.getElementById('sortBy').value = '';
+            loadProducts(1);
+        }
+
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            displayProducts(allProducts);
+        }
+
+        function toggleWishlist(productName) {
+            const index = wishlist.indexOf(productName);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+            } else {
+                wishlist.push(productName);
+            }
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            updateWishlistCount();
+            displayProducts(allProducts);
+        }
+
+        function updateWishlistCount() {
+            document.getElementById('wishlistCount').textContent = wishlist.length;
+        }
+
+        function toggleWishlistView() {
+            if (wishlist.length === 0) {
+                alert('Your wishlist is empty!');
+                return;
+            }
+            const wishlistProducts = allProducts.filter(p => wishlist.includes(p.product_name));
+            displayProducts(wishlistProducts);
+        }
+
+        function toggleComparison(checkbox, productName) {
+            const product = allProducts.find(p => p.product_name === productName);
+            
+            if (checkbox.checked) {
+                if (comparison.length >= 4) {
+                    checkbox.checked = false;
+                    alert('You can compare up to 4 products at a time.');
+                    return;
+                }
+                comparison.push(product);
+            } else {
+                comparison = comparison.filter(p => p.product_name !== productName);
+            }
+            
+            updateComparisonPanel();
+        }
+
+        function updateComparisonPanel() {
+            const panel = document.getElementById('comparisonPanel');
+            const container = document.getElementById('comparisonProducts');
+            const count = document.getElementById('comparisonCount');
+            
+            document.getElementById('compareCount').textContent = comparison.length;
+            count.textContent = comparison.length;
+            
+            if (comparison.length > 0) {
+                panel.classList.add('active');
+                container.innerHTML = comparison.map(product => `
+                    <div class="comparison-item">
+                        <button class="remove-comparison" onclick="removeFromComparison('${product.product_name.replace(/'/g, "\\'")}')">×</button>
+                        <img src="${product.image_url}" 
+                             alt="${product.product_name}" 
+                             loading="lazy"
+                             crossorigin="anonymous"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2780%27 height=%2780%27%3E%3Crect width=%2780%27 height=%2780%27 fill=%27%23334155%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27%2394a3b8%27 font-size=%2712%27%3ENo Image%3C/text%3E%3C/svg%3E';">
+                        <small>${product.product_name.substring(0, 30)}...</small>
+                        <strong>₹${Math.round(product.price).toLocaleString()}</strong>
+                    </div>
+                `).join('');
+            } else {
+                panel.classList.remove('active');
+            }
+        }
+
+        function removeFromComparison(productName) {
+            comparison = comparison.filter(p => p.product_name !== productName);
+            updateComparisonPanel();
+            displayProducts(allProducts);
+        }
+
+        function clearComparison() {
+            comparison = [];
+            updateComparisonPanel();
+            displayProducts(allProducts);
+        }
+
+        function showComparisonModal() {
+            if (comparison.length < 2) {
+                alert('Please select at least 2 products to compare.');
+                return;
+            }
+            
+            const modal = document.getElementById('comparisonModal');
+            const container = document.getElementById('comparisonTableContainer');
+            
+            // Build dynamic feature list - only show features that have values in at least one product
+            const allFeatures = {
+                'Image': (p) => p.image_url,
+                'Product Name': (p) => p.product_name,
+                'Store': (p) => p.retailer,
+                'Category': (p) => p.category,
+                'Price': (p) => p.price,
+                'MRP': (p) => p.mrp && p.mrp > p.price,
+                'Discount': (p) => p.discount && p.discount > 0,
+                'Rating': (p) => p.rating && p.rating > 0,
+                'Brand': (p) => p.brand,
+                'Model': (p) => p.model,
+                'RAM': (p) => p.ram,
+                'Storage': (p) => p.storage,
+                'Processor': (p) => p.processor,
+                'Screen Size': (p) => p.screen_size,
+                'Color': (p) => p.color,
+                'OS': (p) => p.os
+            };
+            
+            // Filter features - only include if at least one product has this data
+            const features = Object.keys(allFeatures).filter(feature => 
+                comparison.some(product => allFeatures[feature](product))
+            );
+            
+            let html = '<table class="comparison-table"><thead><tr><th>Feature</th>';
+            comparison.forEach(product => {
+                html += `<th>${product.product_name.substring(0, 40)}...</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            features.forEach(feature => {
+                html += `<tr><td><strong>${feature}</strong></td>`;
+                comparison.forEach(product => {
+                    let value = '';
+                    switch(feature) {
+                        case 'Image':
+                            value = product.image_url ? `<img src="${product.image_url}" 
+                                          alt="${product.product_name}" 
+                                          style="width: 100px; height: 100px; object-fit: contain;" 
+                                          loading="lazy"
+                                          crossorigin="anonymous"
+                                          onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27100%27 height=%27100%27%3E%3Crect width=%27100%27 height=%27100%27 fill=%27%23334155%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27%2394a3b8%27 font-size=%2714%27%3ENo Image%3C/text%3E%3C/svg%3E';">` : '-';
+                            break;
+                        case 'Product Name': value = product.product_name || '-'; break;
+                        case 'Store': value = product.retailer || '-'; break;
+                        case 'Category': value = product.category || '-'; break;
+                        case 'Price': value = product.price ? '₹' + Math.round(product.price).toLocaleString() : '-'; break;
+                        case 'MRP': value = product.mrp && product.mrp > product.price ? '₹' + Math.round(product.mrp).toLocaleString() : '-'; break;
+                        case 'Discount': value = product.discount && product.discount > 0 ? Math.round(product.discount) + '%' : '-'; break;
+                        case 'Rating': value = product.rating && product.rating > 0 ? product.rating.toFixed(1) + '★' : '-'; break;
+                        case 'Brand': value = product.brand || '-'; break;
+                        case 'Model': value = product.model || '-'; break;
+                        case 'RAM': value = product.ram || '-'; break;
+                        case 'Storage': value = product.storage || '-'; break;
+                        case 'Processor': value = product.processor || '-'; break;
+                        case 'Screen Size': value = product.screen_size || '-'; break;
+                        case 'Color': value = product.color || '-'; break;
+                        case 'OS': value = product.os || '-'; break;
+                    }
+                    html += `<td>${value}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function closeComparisonModal() {
+            document.getElementById('comparisonModal').classList.remove('active');
+        }
+
+        function showComparison() {
+            if (comparison.length === 0) {
+                alert('Select products to compare by checking the boxes on product cards.');
+                return;
+            }
+            showComparisonModal();
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.querySelector('#themeToggle i');
+            icon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'light') {
+            document.querySelector('#themeToggle i').className = 'fas fa-sun';
+        }
+
+        function showLoading(show) {
+            const skeleton = document.getElementById('loadingSkeleton');
+            const container = document.getElementById('productsContainer');
+            
+            if (show) {
+                container.style.display = 'none';
+                skeleton.style.display = 'grid';
+                skeleton.innerHTML = Array(12).fill().map(() => `
+                    <div class="skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                `).join('');
+            } else {
+                skeleton.style.display = 'none';
+                container.style.display = 'grid';
+            }
+        }
+
+        function showEmptyState(message) {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = `
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <i class="fas fa-box-open"></i>
+                    <h3>No Products Found</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>
